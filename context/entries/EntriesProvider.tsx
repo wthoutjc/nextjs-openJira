@@ -18,19 +18,19 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
   entries: [
     {
       _id: uuidv4(),
-      description: "Esto es un texto de excelente calidad y desempeño",
+      description: "Pendiente: Esto es un texto de excelente calidad y desempeño",
       status: "pending",
       createdAt: Date.now(),
     },
     {
       _id: uuidv4(),
-      description: "Esto es un texto2 de excelente calidad y desempeño",
+      description: "En progreso: Esto es un texto2 de excelente calidad y desempeño",
       status: "in-progress",
       createdAt: Date.now() - 1000000,
     },
     {
       _id: uuidv4(),
-      description: "Esto es un texto3 de excelente calidad y desempeño",
+      description: "Terminado: Esto es un texto3 de excelente calidad y desempeño",
       status: "finished",
       createdAt: Date.now() - 100000,
     },

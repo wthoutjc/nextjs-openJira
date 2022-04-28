@@ -7,4 +7,4 @@ interface Entry {
   status: EntryStatus;
 }
 
-export { Entry };
+export { Entry, EntryStatus };
