@@ -1,24 +1,34 @@
 import { UIState } from "./UIProvider";
 
 // Types
-import { PayloadSidebar } from "./types";
+import { UITypes } from "./types";
 
 type UIActionType = {
-  type: PayloadSidebar;
-  payload: UIState;
+  type: UITypes;
+  payload?: UIState;
 };
 
 export const uiReducer = (state: UIState, action: UIActionType): UIState => {
   switch (action.type) {
-    case PayloadSidebar.open:
+    case UITypes.open:
       return {
         ...state,
         sideMenuOpen: true,
       };
-    case PayloadSidebar.close:
+    case UITypes.close:
       return {
         ...state,
         sideMenuOpen: false,
+      };
+    case UITypes.startDragging:
+      return {
+        ...state,
+        isDragging: true,
+      };
+    case UITypes.endDragging:
+      return {
+        ...state,
+        isDragging: false,
       };
     default:
       return state;

@@ -1,5 +1,6 @@
 enum entriesTypes {
-  hola = 1,
+  addEntry = '[Entry] Add Entry',
+  updateEntry = '[Entry] Update Entry',
 }
 
 export { entriesTypes };
