@@ -26,3 +26,7 @@ URL:
 ```
 mongodb://localhost:27017/entriesdb
 ```
+
+## .env SETS
+Rename file __.env.template__ to .env
+

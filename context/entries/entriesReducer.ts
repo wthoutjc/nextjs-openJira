@@ -5,10 +5,15 @@ import { entriesTypes } from "./";
 // Interfaces
 import { Entry } from "../../interfaces";
 
-type ActionProps = {
-  type: entriesTypes;
-  payload: Entry;
-};
+type ActionProps =
+  | {
+      type: entriesTypes;
+      payload: Entry;
+    }
+  | {
+      type: entriesTypes.loadEntries;
+      payload: Entry[];
+    };
 
 const entriesReducer = (
   state: EntriesState,
@@ -30,6 +35,11 @@ const entriesReducer = (
           }
           return entry;
         }),
+      };
+    case entriesTypes.loadEntries:
+      return {
+        ...state,
+        entries: [...(action.payload as Entry[])],
       };
     default:
       return {

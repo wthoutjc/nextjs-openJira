@@ -1,4 +1,4 @@
-import { PropsWithChildren, useReducer } from "react";
+import { PropsWithChildren, useEffect, useReducer } from "react";
 import { entriesReducer } from "./entriesReducer";
 
 // Context
@@ -8,55 +8,49 @@ import { EntriesContext } from "./EntriesContext";
 import { Entry } from "../../interfaces";
 import { entriesTypes } from "./types";
 
-// uuid
-import { v4 as uuidv4 } from "uuid";
+// Api
+import { entriesApi } from "../../apis";
 
 export interface EntriesState {
   entries: Entry[];
 }
 
 const ENTRIES_INITIAL_STATE: EntriesState = {
-  entries: [
-    {
-      _id: uuidv4(),
-      description:
-        "Pendiente: Esto es un texto de excelente calidad y desempeño",
-      status: "pending",
-      createdAt: Date.now(),
-    },
-    {
-      _id: uuidv4(),
-      description:
-        "En progreso: Esto es un texto2 de excelente calidad y desempeño",
-      status: "in-progress",
-      createdAt: Date.now() - 1000000,
-    },
-    {
-      _id: uuidv4(),
-      description:
-        "Terminado: Esto es un texto3 de excelente calidad y desempeño",
-      status: "finished",
-      createdAt: Date.now() - 100000,
-    },
-  ],
+  entries: [],
 };
 
 const EntriesProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
 
-  const addNewEntry = (description: string) => {
-    const newEntry: Entry = {
-      _id: uuidv4(),
-      description,
-      createdAt: Date.now(),
-      status: "pending",
-    };
-
-    dispatch({ type: entriesTypes.addEntry, payload: newEntry });
+  const refreshEntries = async () => {
+    const { data } = await entriesApi.get<Entry[]>("/entries");
+    dispatch({ type: entriesTypes.loadEntries, payload: data });
   };
 
-  const updateEntry = (entry: Entry) => {
-    dispatch({ type: entriesTypes.updateEntry, payload: entry });
+  useEffect(() => {
+    refreshEntries();
+  }, []);
+
+  const addNewEntry = async (description: string) => {
+    const { data } = await entriesApi.post<Entry>("/entries", { description });
+
+    dispatch({ type: entriesTypes.addEntry, payload: data });
+  };
+
+  const updateEntry = async ({ _id, description, status }: Entry) => {
+    try {
+      const { data } = await entriesApi.put<Entry>(`/entries/${_id}`, {
+        description,
+        status,
+      });
+
+      dispatch({
+        type: entriesTypes.updateEntry,
+        payload: data,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

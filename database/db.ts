@@ -28,15 +28,15 @@ const connect = async () => {
     await mongoose.disconnect();
   }
 
-  await mongoose.connect("mongodb://localhost:27017/entries");
+  await mongoose.connect(process.env.MONGO_URL || "");
   mongoConnection.isConnected = 1;
-  console.log("Conectado a Mongodb", "....");
+  console.log("Conectado a Mongodb", process.env.MONGO_URL);
 };
 
 const disconnect = async () => {
-  if (mongoConnection.isConnected !== 0) {
-    return;
-  }
+  if (process.env.NODE_ENV === "development") return;
+
+  if (mongoConnection.isConnected === 0) return;
 
   await mongoose.disconnect();
   console.log("Disconnected from Mongodb");
