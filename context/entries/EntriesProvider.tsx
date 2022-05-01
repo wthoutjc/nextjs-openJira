@@ -11,6 +11,9 @@ import { entriesTypes } from "./types";
 // Api
 import { entriesApi } from "../../apis";
 
+// Notifications
+import { useSnackbar } from "notistack";
+
 export interface EntriesState {
   entries: Entry[];
 }
@@ -21,6 +24,8 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 
 const EntriesProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const refreshEntries = async () => {
     const { data } = await entriesApi.get<Entry[]>("/entries");
@@ -37,7 +42,10 @@ const EntriesProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     dispatch({ type: entriesTypes.addEntry, payload: data });
   };
 
-  const updateEntry = async ({ _id, description, status }: Entry) => {
+  const updateEntry = async (
+    { _id, description, status }: Entry,
+    showSnackBar = false
+  ) => {
     try {
       const { data } = await entriesApi.put<Entry>(`/entries/${_id}`, {
         description,
@@ -48,6 +56,17 @@ const EntriesProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
         type: entriesTypes.updateEntry,
         payload: data,
       });
+
+      if (showSnackBar) {
+        enqueueSnackbar("Entry updated successfully", {
+          variant: "success",
+          autoHideDuration: 1500,
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      }
     } catch (error) {
       console.error(error);
     }
